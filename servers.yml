@@ -1,0 +1,34 @@
+---
+- hosts: all
+  remote_user: root
+  vars:
+    NORMAL_USER_NAME: 'testuser'
+  tasks:
+    - name: "Create a secondary,non-root user"
+      user:
+        name: "{{ NORMAL_USER_NAME }}"
+        password: '$6$M5wGbDBEyx2MILB1$ZytD3XUWom5rea/xfFbOjoyZtTxzV/gew7gowPaV1l.2lG/UoN2j.n9SyJ3G7HzMv6LSq8IR3I1Cy1pOmHljH.'
+        shell: /bin/bash
+    - name: Add authorize key
+      authorized_key:
+        user: "{{ NORMAL_USER_NAME }}"
+        key: "{{  lookup('file', '~/.ssh/ansible.pub') }}"
+    - name: add normal user to sudoers
+      lineinfile:
+        dest: /etc/sudoers
+        regexp: "{{ NORMAL_USER_NAME }} ALL"
+        line: "{{ NORMAL_USER_NAME }} ALL=(ALL) ALL"
+        state: present
+- hosts:  nginx
+  tasks:
+    - name: install yum
+      package:
+        name: yum
+        state:  latest
+
+- hosts:  wordpress
+  tasks:
+    - name: install yum
+      package:
+        name: yum
+        state:  latest
