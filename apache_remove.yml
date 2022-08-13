@@ -1,0 +1,16 @@
+---
+
+- hosts: all
+  user: root
+  tasks: 
+
+  -  name: uninstall apache2 package
+     yum:  
+       name: httpd
+       state: absent
+
+  -  name: uninstall php 
+     yum:
+       name: php
+       state: absent
+
