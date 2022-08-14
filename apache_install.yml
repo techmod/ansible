@@ -7,15 +7,17 @@
   -  name: update repository index
      yum:
        update_cache: yes
-
+     when: ansible_distribution in ["CentOS", "Red Hat Enterprise Linux"]
 
   -  name: install apache2 package
      yum:  
        name: httpd
        state: latest
+     when: ansible_distribution == "CentOS" and ansible_distribution_version == "7.9"
 
   -  name: install php 
      yum:
        name: php
        state: latest
+     when: ansible_distribution == "CentOS"
 
