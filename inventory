@@ -1,2 +1,2 @@
-192.168.254.10
-192.168.254.11
+192.168.254.10 apache_package=httpd php_package=php
+192.168.254.11 apache_package=httpd php_package=php
