@@ -1,0 +1,36 @@
+   - name: install updates (Ubuntu)
+     tags: always
+     apt: 
+       upgrade: dist
+       update_cache: yes
+     changed_when: false
+     when: ansible_distribution == "Ubuntu"
+
+   - name: install updates (CentOS)
+     tags: always
+     yum: 
+       upgrade: dist
+       update_cache: yes
+     changed_when: false
+     when: ansible_distribution == "CentOS"
+
+
+   - name: create moh user
+     user:
+       name: moh
+       groups: root
+     
+   - name: add ssh key for moh
+     tags: always
+     authorized_key:
+       user: moh
+       key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDG/5ExhpG0Sb9ZGlqSBEGaBFQnoYSBulfdjSeMXX5dVTt8tOy1jw/aKseK4MltN5lOkJPZ3+bQW88X1x2r2AuYx+gy41A3qcuiT7FhJ9r27VZytWZ62ou+c0ymKvlqVb676tL6gzxrp47NRsBiNz0t6oj8P64orXiIvtK9sj3ceDqpmEB2plAl6vkBifSI7nhv96gomPdLgg4h5iZOtWCrhidzXCikaxAx/pfJVyY2h5QTm5Z7lgA2m4BkDWT4NpbLAi3E4q7z4f7+nOHOFx4yZFmr0WkimW5k+oYefMIwySGbJjOcV4uLGhikNZ5XGmUCPvACxtri3mmguzZ56TFGEeT1bzQ+cotQJ6b6fwEtww/9DQk+vaIq9ReVpuYwUEAnMJcHMuJ8agKXR3lSMZig2qUxEyXn40XoxLXD008xeVGNggu/5uqtUAjonC/D6o40rLqlmbS1IGXudS6qJhThJ4QC36Kgbta3XHuwNnS9w9kqKytQBwRF17AwPoQu+4gYdMCSK2QHqqrPVMiO//Ar+LvQkqknaoRGJotwzYK7/iuOQX3y4KLrcDLvGryCBE/e4eS4MspJBLrrd14fFTvWT34CXos/0935cpu+ImAh3L0nIRmfmYPsbgyB8ezWIKIWAZT+MFWFQcUU2jE5pWfpnDu1M8eMq5u3XE8+H4GjGw== mo@mo-virtual-machine"
+         
+   - name: add sudoers file for moh
+     tags: always
+     copy:
+       src: /etc/ansible/roles/base/files/sudoer_moh
+       dest: /etc/sudoers.d/moh
+       owner: root
+       group: root
+       mode: 0440

@@ -1,0 +1,26 @@
+   - name: copy elasticsearch file checksum
+     copy:
+       src: /etc/ansible/roles/elasticsearch/files/elasticsearch-8.3.3-amd64.deb.sha512
+       dest: /root/
+       owner: root
+       group: root
+       mode: 0440   
+
+   - name: copy elasticsearch file      
+     copy:
+       src: /etc/ansible/roles/elasticsearch/files/elasticsearch-8.3.3-amd64.deb
+       dest: /root/
+       owner: root
+       group: root
+       mode: 0440
+
+   - name: Install checksum
+     command: shasum -a 512 -c /root/elasticsearch-8.3.3-amd64.deb.sha512
+
+   - name: Install elasticsearch
+     command: sudo dpkg -i /root/elasticsearch-8.3.3-amd64.deb 
+
+   - name: Install java
+     command: apt install openjdk-18-jre-headless -y
+
+
