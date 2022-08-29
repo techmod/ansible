@@ -1,6 +1,6 @@
    - name: copy elasticsearch file checksum
      copy:
-       src: /etc/ansible/roles/elasticsearch/files/elasticsearch-8.3.3-amd64.deb.sha512
+       src: /etc/ansible/roles/elasticsearch/files/elasticsearch-8.4.0-amd64.deb.sha512
        dest: /root/
        owner: root
        group: root
@@ -8,19 +8,36 @@
 
    - name: copy elasticsearch file      
      copy:
-       src: /etc/ansible/roles/elasticsearch/files/elasticsearch-8.3.3-amd64.deb
+       src: /etc/ansible/roles/elasticsearch/files/elasticsearch-8.4.0-amd64.deb
        dest: /root/
        owner: root
        group: root
        mode: 0440
 
-   - name: Install checksum
-     command: shasum -a 512 -c /root/elasticsearch-8.3.3-amd64.deb.sha512
 
-   - name: Install elasticsearch
-     command: sudo dpkg -i /root/elasticsearch-8.3.3-amd64.deb 
 
    - name: Install java
-     command: apt install openjdk-18-jre-headless -y
+     command: sudo apt install default-jre -y
 
+   - name: Install java
+     command: sudo apt install default-jdk -y
+
+   - name: Install checksum
+     command: sudo shasum -a 512 -c /root/elasticsearch-8.4.0-amd64.deb.sha512
+
+   - name: Install elasticsearch
+     command: sudo dpkg -i /root/elasticsearch-8.4.0-amd64.deb
+     register: join_command 
+
+   - name: save elasticsearch password
+     copy: content="{{ join_command.stdout }}" dest="output.txt"
+
+   - name: Run elasticsearch
+     command: sudo systemctl daemon-reload
+
+   - name: Run elasticsearch
+     command: sudo systemctl enable elasticsearch.service
+
+   #- name: Run elasticsearch
+     #command: systemctl restart elasticsearch.service
 
