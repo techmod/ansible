@@ -32,12 +32,25 @@
    - name: save elasticsearch password
      copy: content="{{ join_command.stdout }}" dest="output.txt"
 
-   - name: Run elasticsearch
+   - name: Create a service drop-in configuration directory.
+     command: sudo mkdir /etc/systemd/system/elasticsearch.service.d
+
+   #- name: Define TimeoutStartSec option to increase startup timeout.
+     #command: sudo echo -e "[Service]\nTimeoutStartSec=180" | sudo tee /etc/systemd/system/elasticsearch.service.d/startup-timeout.conf
+
+   - name: Define TimeoutStartSec option to increase startup timeout.
+     copy:
+       dest: "/etc/systemd/system/elasticsearch.service.d/startup-timeout.conf"
+       content: |
+         [Service]
+         TimeoutStartSec=180
+
+   - name: daemon-reload
      command: sudo systemctl daemon-reload
 
-   - name: Run elasticsearch
+   - name: add to autorun
      command: sudo systemctl enable elasticsearch.service
 
-   #- name: Run elasticsearch
-     #command: systemctl restart elasticsearch.service
+   - name: Run elasticsearch
+     command: sudo systemctl restart elasticsearch.service
 
