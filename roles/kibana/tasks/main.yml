@@ -1,0 +1,47 @@
+   - name: copy kibana file
+     copy:
+       src: /etc/ansible/roles/kibana/files/kibana-8.4.0-amd64.deb
+       dest: /root/
+       owner: root
+       group: root
+       mode: 0440   
+
+
+   - name: Install java
+     command: sudo apt install default-jre -y
+
+   - name: Install java
+     command: sudo apt install default-jdk -y
+
+   - name: Install kibana shasum
+     command: sudo shasum -a 512 kibana-8.4.0-amd64.deb
+
+   - name: Install kibana
+     command: sudo dpkg -i kibana-8.4.0-amd64.deb
+     register: join_command 
+
+   - name: save kibana log
+     copy: content="{{ join_command.stdout }}" dest="kibana-output.txt"
+
+   - name: Create a service drop-in configuration directory.
+     command: sudo mkdir /etc/systemd/system/kibana.service.d
+
+   #- name: Define TimeoutStartSec option to increase startup timeout.
+     #command: sudo echo -e "[Service]\nTimeoutStartSec=180" | sudo tee /etc/systemd/system/elasticsearch.service.d/startup-timeout.conf
+
+   - name: Define TimeoutStartSec option to increase startup timeout.
+     copy:
+       dest: "/etc/systemd/system/kibana.service.d/startup-timeout.conf"
+       content: |
+         [Service]
+         TimeoutStartSec=180
+
+   - name: daemon-reload
+     command: sudo systemctl daemon-reload
+
+   - name: add to autorun
+     command: sudo systemctl enable kibana.service
+
+   - name: Run elasticsearch
+     command: sudo systemctl restart kibana.service
+

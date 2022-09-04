@@ -1,0 +1,12 @@
+---
+ 
+ - hosts: es
+   become: true
+   pre_tasks:
+   roles:
+     - base
+
+ - hosts: es
+   become: true
+   roles:
+     - kibana
